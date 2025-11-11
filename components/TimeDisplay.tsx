@@ -1,15 +1,33 @@
-import React from 'react'
+'use client';
+import dayjs from 'dayjs';
+import React, { useEffect, useState } from 'react'
 
 const TimeDisplay = ({
-    hours,
-    minutes,
-    seconds,
+    lastCheckInTime,
+    fixed
 }: {
-    hours: number;
-    minutes: number;
-    seconds: number;
+    lastCheckInTime: string;
+    fixed: boolean;
 }) => {
+    const [elapsedSeconds, setElapsedSeconds] = useState<number>(() => {
+        const target = dayjs(lastCheckInTime);
+        return dayjs().diff(target, "seconds");
+    });
 
+    useEffect(() => {
+        if(fixed) return;
+        const target = dayjs(lastCheckInTime);
+        // Sync immediately in case prop changed
+        setElapsedSeconds(dayjs().diff(target, "seconds"));
+        const intervalId = setInterval(() => {
+            setElapsedSeconds(dayjs().diff(target, "seconds"));
+        }, 1000);
+        return () => clearInterval(intervalId);
+    }, [lastCheckInTime, fixed]);
+
+    const hours = fixed ? 0 : Math.floor(elapsedSeconds / 3600);
+    const minutes = fixed ? 0 : Math.floor((elapsedSeconds % 3600) / 60);
+    const seconds = fixed ? 0 : elapsedSeconds % 60;
     return (
         <>
             <div className="grid auto-cols-max grid-flow-col gap-5 text-center">
