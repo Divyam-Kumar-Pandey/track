@@ -40,7 +40,8 @@ export default function RootLayout({
           </button>
           
           <button>
-            <Link href="/daily-report" className="flex flex-col items-center gap-2">
+            <Link href="/daily-report" className="flex flex-col items-center gap-2 relative">
+            <div className="badge badge-success badge-xs absolute -top-2 right-0 p-[2px]">New</div>
             <MdOutlineCalendarMonth className="size-[1.2em]" />
               <span className="dock-label">Daily Report</span>
             </Link>
