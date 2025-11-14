@@ -12,10 +12,10 @@ export default function DailyReportPage() {
     const reports = useQuery(api.daily_report.getDailyReport);
     const HOURS_IN_WORKDAY = 7;
     return (
-        <main className="flex min-h-[60vh] items-center justify-center p-6">
+        <main className="flex min-h-[70vh] items-center justify-center p-6">
             <div className="w-full max-w-2xl">
                 <h1 className="text-3xl font-semibold text-center">Daily Reports</h1>
-                <div className="mt-4 h-[60vh] overflow-y-auto rounded-lg ">
+                <div className="mt-4 h-full mb-20 overflow-y-auto rounded-lg ">
                     {!reports && (
                         <p className="text-gray-500 text-center">Loading...</p>
                     )}
@@ -42,6 +42,7 @@ export default function DailyReportPage() {
                                     </button>
                                 </li>
                             ))}
+                            <div className="divider">That's all</div>
                         </ul>
                     )}
                 </div>

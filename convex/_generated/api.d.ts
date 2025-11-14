@@ -11,6 +11,7 @@
 import type * as crons from "../crons.js";
 import type * as daily_report from "../daily_report.js";
 import type * as time_log from "../time_log.js";
+import type * as weekly_report from "../weekly_report.js";
 
 import type {
   ApiFromModules,
@@ -22,6 +23,7 @@ declare const fullApi: ApiFromModules<{
   crons: typeof crons;
   daily_report: typeof daily_report;
   time_log: typeof time_log;
+  weekly_report: typeof weekly_report;
 }>;
 
 /**
