@@ -1,0 +1,14 @@
+{
+    "name": "Track",
+    "short_name": "Track",
+    "description": "Track your time",
+    "start_url": "/",
+    "display": "standalone",
+    "icons": [
+      {
+        "src": "time-svgrepo-com.svg",
+        "type": "image/svg+xml",
+        "sizes": "any"
+      }
+    ]
+  }
