@@ -32,18 +32,24 @@ export const updateWeeklyReport = mutation({
     const weekStartDate = dayjs().week(args.weekNumber).startOf("week");
     const weekEndDate = dayjs().week(args.weekNumber).endOf("week");
     const data = await ctx.db.query("daily_report").filter((q) => q.and(q.gte(q.field("date"), weekStartDate.format("YYYY-MM-DD")), q.lte(q.field("date"), weekEndDate.format("YYYY-MM-DD")))).collect();
-    const totalHours = data.reduce((acc, curr) => acc + curr.hours, 0);
-    const totalMinutes = data.reduce((acc, curr) => acc + curr.minutes, 0);
-    const totalSeconds = data.reduce((acc, curr) => acc + curr.seconds, 0);
-    await ctx.db.insert("weekly_report", {
+    let totalSecondsAccum = 0;
+    for (const log of data) {
+      totalSecondsAccum += log.seconds;
+      totalSecondsAccum += log.minutes * 60;
+      totalSecondsAccum += log.hours * 3600;
+    }
+    const hours = Math.floor(totalSecondsAccum / 3600);
+    const minutes = Math.floor((totalSecondsAccum % 3600) / 60);
+    const seconds = totalSecondsAccum % 60;
+    const weeklyReport = await ctx.db.insert("weekly_report", {
       week_number: args.weekNumber,
       start_date: weekStartDate.format("YYYY-MM-DD"),
       end_date: weekEndDate.format("YYYY-MM-DD"),
-      hours: totalHours,
-      minutes: totalMinutes,
-      seconds: totalSeconds,
+      hours: hours,
+      minutes: minutes,
+      seconds: seconds,
     });
-    return data;
+    return weeklyReport;
   },
 });
 
