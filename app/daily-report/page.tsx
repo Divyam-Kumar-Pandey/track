@@ -10,7 +10,7 @@ import TimeDisplayStatic from "@/components/TimeDisplayStatic";
 
 export default function DailyReportPage() {
     const reports = useQuery(api.daily_report.getDailyReport);
-
+    const HOURS_IN_WORKDAY = 7;
     return (
         <main className="flex min-h-[60vh] items-center justify-center p-6">
             <div className="w-full max-w-2xl">
@@ -28,7 +28,7 @@ export default function DailyReportPage() {
                                 <li key={r._id} className="list-row flex items-center justify-between" >
                                     <div className="flex items-center gap-4">
                                     <div>
-                                       {r.hours < 8 ? <MdIncompleteCircle className="size-6 text-orange-500" /> : <MdCheckCircle className="size-6 text-green-500" />}
+                                       {r.hours < HOURS_IN_WORKDAY ? <MdIncompleteCircle className="size-6 text-orange-500" /> : <MdCheckCircle className="size-6 text-green-500" />}
                                     </div>
                                     <div className="flex flex-col items-start">
                                         <div className="text-sm opacity-60">{dayjs(r.date).format("ddd, MMM D, YYYY")}</div>

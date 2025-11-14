@@ -11,4 +11,16 @@ crons.cron(
   { date: dayjs().format("YYYY-MM-DD") },
 );
 
+// crons.cron(
+//   "update weekly report",
+//   "35 18 * * *",
+//   api.weekly_report.updateWeeklyReport,
+// )
+
+crons.cron(
+  "check for ongoing sessions",
+  "29 18 * * *",
+  api.time_log.checkForOngoingSessions,
+);
+
 export default crons;
