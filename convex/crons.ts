@@ -6,7 +6,7 @@ const crons = cronJobs();
 
 crons.cron(
   "create daily report",
-  "5 0 * * *",
+  "35 18 * * *",
   api.daily_report.createDailyReport,
   { date: dayjs().format("YYYY-MM-DD") },
 );
