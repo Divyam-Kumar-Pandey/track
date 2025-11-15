@@ -5,11 +5,16 @@ import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import dayjs from "dayjs";
 import weekOfYear from "dayjs/plugin/weekOfYear";
+import updateLocale from "dayjs/plugin/updateLocale";
 import { IoMdSettings } from "react-icons/io";
 import { MdCheckCircle, MdIncompleteCircle } from "react-icons/md";
 import TimeDisplayStatic from "@/components/TimeDisplayStatic";
 
 dayjs.extend(weekOfYear);
+dayjs.extend(updateLocale);
+dayjs.updateLocale('en', {
+  weekStart: 1
+})
 
 export default function WeeklyReportPage() {
   const reports = useQuery(api.weekly_report.getWeeklyReport);
