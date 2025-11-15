@@ -13,7 +13,7 @@ crons.cron(
 
 crons.cron(
   "update weekly report",
-  "35 18 * * *",
+  "40 18 * * *",
   api.weekly_report.updateWeeklyReportCron,
 );
 
