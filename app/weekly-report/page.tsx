@@ -22,7 +22,7 @@ export default function WeeklyReportPage() {
     reports?.filter((w: any) => w.week_number !== thisWeekNumber) ?? [];
 
   return (
-    <main className="flex min-h-[70vh] p-6">
+    <main className="flex min-h-[70vh] p-6 justify-center items-center">
       <div className="w-full max-w-2xl h-full">
         <h1 className="text-3xl font-semibold text-center">Weekly Reports</h1>
 
