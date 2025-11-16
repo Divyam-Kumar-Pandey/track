@@ -41,15 +41,26 @@ export const updateWeeklyReport = mutation({
     const hours = Math.floor(totalSecondsAccum / 3600);
     const minutes = Math.floor((totalSecondsAccum % 3600) / 60);
     const seconds = totalSecondsAccum % 60;
-    const weeklyReport = await ctx.db.insert("weekly_report", {
-      week_number: args.weekNumber,
-      start_date: weekStartDate.format("YYYY-MM-DD"),
-      end_date: weekEndDate.format("YYYY-MM-DD"),
-      hours: hours,
-      minutes: minutes,
-      seconds: seconds,
-    });
-    return weeklyReport;
+    // check if the weekly report already exists, then update it, otherwise create a new one
+    const existingWeeklyReport = await ctx.db.query("weekly_report").filter((q) => q.eq(q.field("week_number"), args.weekNumber)).collect();
+    if (existingWeeklyReport.length > 0) {
+      const updatedWeeklyReport = await ctx.db.patch(existingWeeklyReport[0]._id, {
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds,
+      });
+      return updatedWeeklyReport;
+    } else {
+      const weeklyReport = await ctx.db.insert("weekly_report", {
+        week_number: args.weekNumber,
+        start_date: weekStartDate.format("YYYY-MM-DD"),
+        end_date: weekEndDate.format("YYYY-MM-DD"),
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds,
+      });
+      return weeklyReport;
+    }
   },
 });
 
