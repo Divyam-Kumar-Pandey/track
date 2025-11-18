@@ -64,7 +64,6 @@ export default function AdminPage() {
               className="input input-bordered"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              max={dayjs().format("YYYY-MM-DD")}
               required
             />
           </label>
