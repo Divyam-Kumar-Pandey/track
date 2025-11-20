@@ -8,13 +8,16 @@ import dayjs from "dayjs";
 export default function AdminPage() {
   const createDailyReport = useMutation(api.daily_report.createDailyReport);
   // Casting to any because generated types may not yet include `weekly_report`
-  const updateWeeklyReport = useMutation((api as any).weekly_report.updateWeeklyReport);
+  const updateMonthlyReport = useMutation(api.monthly_report.updateMonthlyReport);
+  const updateWeekendHolidaysForThisMonth = useMutation(api.holiday.updateWeekendHolidaysForThisMonth);
   const [date, setDate] = useState<string>(dayjs().format("YYYY-MM-DD"));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; text: string } | null>(null);
-  const [weekNumber, setWeekNumber] = useState<number>(1);
-  const [isSubmittingWeekly, setIsSubmittingWeekly] = useState(false);
-  const [weeklyFeedback, setWeeklyFeedback] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [monthNumber, setMonthNumber] = useState<number>(1);
+  const [isSubmittingMonthly, setIsSubmittingMonthly] = useState(false);
+  const [monthlyFeedback, setMonthlyFeedback] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [weekendHolidaysFeedback, setWeekendHolidaysFeedback] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [isSubmittingWeekendHolidays, setIsSubmittingWeekendHolidays] = useState(false);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,26 +35,44 @@ export default function AdminPage() {
     }
   };
 
-  const onSubmitWeekly = async (e: React.FormEvent) => {
+  const onSubmitMonthly = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!weekNumber || weekNumber < 1 || weekNumber > 53) {
-      setWeeklyFeedback({ type: "error", text: "Please enter a valid week number (1-53)." });
+    if (!monthNumber || monthNumber < 1 || monthNumber > 12) {
+      setMonthlyFeedback({ type: "error", text: "Please enter a valid month number (1-12)." });
       return;
     }
-    setIsSubmittingWeekly(true);
-    setWeeklyFeedback(null);
+    setIsSubmittingMonthly(true);
+    setMonthlyFeedback(null);
     try {
-      const result = await updateWeeklyReport({ weekNumber: Number(weekNumber) });
+      const result = await updateMonthlyReport({ monthNumber: Number(monthNumber) });
       const count = Array.isArray(result) ? result.length : 0;
-      setWeeklyFeedback({ type: "success", text: `Fetched ${count} daily report(s) for week ${weekNumber}.` });
+      setMonthlyFeedback({ type: "success", text: `Fetched ${count} daily report(s) for month ${monthNumber}.` });
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Failed to update weekly report.";
-      setWeeklyFeedback({ type: "error", text: message });
+      const message = err instanceof Error ? err.message : "Failed to update monthly report.";
+      setMonthlyFeedback({ type: "error", text: message });
     } finally {
-      setIsSubmittingWeekly(false);
+      setIsSubmittingMonthly(false);
     }
   };
 
+  const onSubmitWeekendHolidays = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!monthNumber || monthNumber < 1 || monthNumber > 12) {
+      setWeekendHolidaysFeedback({ type: "error", text: "Please enter a valid month number (1-12)." });
+      return;
+    }
+    setIsSubmittingWeekendHolidays(true);
+    setWeekendHolidaysFeedback(null);
+    try {
+      const result = await updateWeekendHolidaysForThisMonth({ monthNumber: Number(monthNumber) });
+      setWeekendHolidaysFeedback({ type: "success", text: `Updated ${result} weekend holidays for month ${monthNumber}.` });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to update weekend holidays.";
+      setWeekendHolidaysFeedback({ type: "error", text: message });
+    } finally {
+      setIsSubmittingWeekendHolidays(false);
+    }
+  };
   return (
     <main className="flex min-h-[60vh] items-center justify-center p-6">
       <div className="w-full max-w-xl">
@@ -76,26 +97,49 @@ export default function AdminPage() {
             </div>
           )}
         </form>
-        <h2 className="text-2xl font-semibold text-center mt-10">Admin: Update Weekly Report</h2>
-        <form onSubmit={onSubmitWeekly} className="mt-4 grid grid-cols-1 gap-4 rounded-lg border p-4">
+        <h2 className="text-2xl font-semibold text-center mt-10">Admin: Update Monthly Report</h2>
+        <form onSubmit={onSubmitMonthly} className="mt-4 grid grid-cols-1 gap-4 rounded-lg border p-4">
           <label className="form-control">
-            <span className="label-text mb-2">Enter week number (1-53)</span>
+            <span className="label-text mb-2">Enter month number (1-12)</span>
             <input
               type="number"
               className="input input-bordered"
               min={1}
               max={53}
-              value={weekNumber}
-              onChange={(e) => setWeekNumber(Number(e.target.value))}
+              value={monthNumber}
+              onChange={(e) => setMonthNumber(Number(e.target.value))}
               required
             />
           </label>
-          <button className="btn btn-primary" type="submit" disabled={isSubmittingWeekly}>
-            {isSubmittingWeekly ? "Updating..." : "Update Weekly Report"}
+          <button className="btn btn-primary" type="submit" disabled={isSubmittingMonthly}>
+            {isSubmittingMonthly ? "Updating..." : "Update Monthly Report"}
           </button>
-          {weeklyFeedback && (
-            <div className={weeklyFeedback.type === "success" ? "text-green-600" : "text-red-600"} role="status" aria-live="polite">
-              {weeklyFeedback.text}
+          {monthlyFeedback && (
+            <div className={monthlyFeedback.type === "success" ? "text-green-600" : "text-red-600"} role="status" aria-live="polite">
+              {monthlyFeedback.text}
+            </div>
+          )}
+        </form>
+        <h2 className="text-2xl font-semibold text-center mt-10">Admin: Update Weekend Holidays for This Month</h2>
+        <form onSubmit={onSubmitWeekendHolidays} className="mt-4 grid grid-cols-1 gap-4 rounded-lg border p-4">
+          <label className="form-control">
+            <span className="label-text mb-2">Enter month number (1-12)</span>
+            <input
+              type="number"
+              className="input input-bordered"
+              min={1}
+              max={12}
+              value={monthNumber}
+              onChange={(e) => setMonthNumber(Number(e.target.value))}
+              required
+            />
+          </label>
+          <button className="btn btn-primary" type="submit" disabled={isSubmittingWeekendHolidays}>
+            {isSubmittingWeekendHolidays ? "Updating..." : "Update Weekend Holidays"}
+          </button>
+          {weekendHolidaysFeedback && (
+            <div className={weekendHolidaysFeedback.type === "success" ? "text-green-600" : "text-red-600"} role="status" aria-live="polite">
+              {weekendHolidaysFeedback.text}
             </div>
           )}
         </form>

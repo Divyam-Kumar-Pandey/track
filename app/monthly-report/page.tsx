@@ -17,47 +17,49 @@ dayjs.updateLocale('en', {
 })
 
 export default function WeeklyReportPage() {
-  const reports = useQuery(api.weekly_report.getWeeklyReport);
-  const HOURS_IN_WORKWEEK = 50; 
-  const thisWeekNumber = dayjs().week();
+  const reports = useQuery(api.monthly_report.getMonthlyReport);
+  const workingDaysInMonth = useQuery(api.holiday.getWorkingDaysInMonth, { monthNumber: dayjs().month() });
+  // const HOURS_IN_WORKMONTH = 50; 
+  const thisMonthNumber = dayjs().month();
 
-  const currentWeek =
-    reports && reports.find((w: any) => w.week_number === thisWeekNumber);
-  const otherWeeks =
-    reports?.filter((w: any) => w.week_number !== thisWeekNumber) ?? [];
+  const currentMonth =
+    reports && reports.find((m: any) => m.month_number === thisMonthNumber);
+  const otherMonths =
+    reports?.filter((m: any) => m.month_number !== thisMonthNumber) ?? [];
 
   return (
     <main className="flex min-h-[70vh] p-6 justify-center items-center">
       <div className="w-full max-w-2xl h-full">
-        <h1 className="text-3xl font-semibold text-center">Weekly Reports</h1>
+        <h1 className="text-3xl font-semibold text-center">Monthly Reports</h1>
 
         <section className="mt-6 rounded-lg border p-4 bg-base-100 shadow-md">
-          <h2 className="text-xl font-semibold mb-2 text-center">
-            Current Week
-          </h2>
+
           {!reports && (
             <p className="text-gray-500 text-center">Loading...</p>
           )}
-          {reports && !currentWeek && (
+          {reports && !currentMonth && (
             <p className="text-gray-500 text-center">
-              No data for the current week yet.
+              No data for the current month yet.
             </p>
           )}
-          {currentWeek && (
+          {currentMonth && (
             <div className="flex flex-col items-center gap-2">
               <div className="text-2xl font-bold">
-                Week {currentWeek.week_number}
+                {dayjs(currentMonth.start_date).format("MMMM YYYY")}
               </div>
               <div className="opacity-60">
-                {dayjs(currentWeek.start_date).format("ddd, MMM D, YYYY")} –{" "}
-                {dayjs(currentWeek.end_date).format("ddd, MMM D, YYYY")}
+                {dayjs(currentMonth.start_date).format("ddd, MMM D, YYYY")} –{" "}
+                {dayjs(currentMonth.end_date).format("ddd, MMM D, YYYY")}
               </div>
               <TimeDisplayStatic
-                totalHours={currentWeek.hours}
-                totalMinutes={currentWeek.minutes}
-                totalSeconds={currentWeek.seconds}
+                totalHours={currentMonth.hours}
+                totalMinutes={currentMonth.minutes}
+                totalSeconds={currentMonth.seconds}
                 fontSize="text-5xl"
               />
+              {workingDaysInMonth && <div className="text-sm opacity-60">
+                Avg: {((currentMonth.hours*60*60 + currentMonth.minutes*60 + currentMonth.seconds) / (workingDaysInMonth*3600)).toFixed(2)} hours/day
+              </div>}
             </div>
           )}
         </section>
@@ -67,14 +69,14 @@ export default function WeeklyReportPage() {
             <p className="text-gray-500 text-center">Loading...</p>
           )}
           {reports && reports.length === 0 && (
-            <p className="text-gray-500 text-center">No weekly reports yet</p>
+            <p className="text-gray-500 text-center">No monthly reports yet</p>
           )}
-          {reports && otherWeeks.length > 0 && (
+          {reports && otherMonths.length > 0 && (
             <ul className="list bg-base-100 rounded-box shadow-md">
-              {otherWeeks.map(
-                (w: {
+              {otherMonths.map(
+                (m: {
                   _id: string;
-                  week_number: number;
+                  month_number: number;
                   start_date: string;
                   end_date: string;
                   hours: number;
@@ -82,31 +84,32 @@ export default function WeeklyReportPage() {
                   seconds: number;
                 }) => (
                   <li
-                    key={w._id}
+                    key={m._id}
                     className="list-row flex items-center justify-between"
                   >
                     <div className="flex items-center gap-4">
-                      <div>
-                        {w.hours < HOURS_IN_WORKWEEK ? (
+                      {/* <div>
+                        {m.hours < HOURS_IN_WORKMONTH ? (
                           <MdIncompleteCircle className="size-6 text-orange-500" />
                         ) : (
                           <MdCheckCircle className="size-6 text-green-500" />
                         )}
-                      </div>
+                      </div> */}
                       <div className="flex flex-col items-start">
                         <div className="text-sm opacity-60">
-                          Week {w.week_number} •{" "}
-                          {dayjs(w.start_date).format("MMM D")} –{" "}
-                          {dayjs(w.end_date).format("MMM D, YYYY")}
+                          Month {m.month_number} •{" "}
+                          {dayjs(m.start_date).format("MMM D")} –{" "}
+                          {dayjs(m.end_date).format("MMM D, YYYY")}
                         </div>
                         <div>
                           <TimeDisplayStatic
-                            totalHours={w.hours}
-                            totalMinutes={w.minutes}
-                            totalSeconds={w.seconds}
+                            totalHours={m.hours}
+                            totalMinutes={m.minutes}
+                            totalSeconds={m.seconds}
                             fontSize="text-2xl"
                           />
                         </div>
+                        
                       </div>
                     </div>
                     <button

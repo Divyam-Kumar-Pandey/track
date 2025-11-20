@@ -12,15 +12,22 @@ crons.cron(
 );
 
 crons.cron(
-  "update weekly report",
+  "update monthly report",
   "40 18 * * *", // every day at 00:10 AM, IST
-  api.weekly_report.updateWeeklyReportCron,
+  api.monthly_report.updateMonthlyReportCron,
 );
 
 crons.cron(
   "check for ongoing sessions",
   "29 18 * * *", // every day at 11:59 PM, IST
   api.time_log.checkForOngoingSessions,
+);
+
+crons.cron(
+  "update weekend holidays for this month",
+  "0 0 1 * *", // every month at 5:30 AM, IST
+  api.holiday.updateWeekendHolidaysForThisMonth,
+  { monthNumber: dayjs().tz("Asia/Kolkata").month() },
 );
 
 export default crons;
