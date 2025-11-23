@@ -2,12 +2,6 @@ import { cronJobs } from "convex/server";
 import { api, internal } from "./_generated/api";
 import dayjs from "dayjs";
 
-import utc from 'dayjs/plugin/utc'
-import timezone from 'dayjs/plugin/timezone'
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
-
 const crons = cronJobs();
 
 crons.cron(
@@ -33,7 +27,7 @@ crons.cron(
   "update weekend holidays for this month",
   "0 0 1 * *", // every month at 5:30 AM, IST
   api.holiday.updateWeekendHolidaysForThisMonth,
-  { monthNumber: dayjs().tz("Asia/Kolkata").month() },
+  { monthNumber: dayjs().month() },
 );
 
 export default crons;
