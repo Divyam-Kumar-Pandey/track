@@ -45,14 +45,15 @@ export const checkForOngoingSessions = mutation({
         type: "OUT",
         date: date,
       });
-      let nextTimestamp = dayjs(dayjs(date).add(1, "day").format("YYYY-MM-DD")+"00:00:01").format("YYYY-MM-DDTHH:mm:ss");
-      let nextDate = dayjs(date).add(1, "day").format("YYYY-MM-DD");
-      const inTime = await ctx.db.insert("time_log", {
-        timestamp: nextTimestamp,
-        type: "IN",
-        date: nextDate,
-      });
-      return { outTime, inTime };
+      // let nextTimestamp = dayjs(dayjs(date).add(1, "day").format("YYYY-MM-DD")+"00:00:01").format("YYYY-MM-DDTHH:mm:ss");
+      // let nextDate = dayjs(date).add(1, "day").format("YYYY-MM-DD");
+      // const inTime = await ctx.db.insert("time_log", {
+      //   timestamp: nextTimestamp,
+      //   type: "IN",
+      //   date: nextDate,
+      // });
+      // return { outTime, inTime };
+      return { outTime };
     }
   },
 });
