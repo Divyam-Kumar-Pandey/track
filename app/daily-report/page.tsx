@@ -7,8 +7,13 @@ import { IoMdSettings } from "react-icons/io";
 import { MdCheckCircle, MdIncompleteCircle } from "react-icons/md";
 import TimeDisplay from "@/components/TimeDisplay";
 import TimeDisplayStatic from "@/components/TimeDisplayStatic";
+import { useUser, RedirectToSignIn } from "@clerk/nextjs";
 
 export default function DailyReportPage() {
+    const { user } = useUser();
+    if (!user) {
+        return <RedirectToSignIn />;
+    }
     const reports = useQuery(api.daily_report.getDailyReport);
     const HOURS_IN_WORKDAY = 7;
     return (
@@ -28,7 +33,11 @@ export default function DailyReportPage() {
                                 <li key={r._id} className="list-row flex items-center justify-between" >
                                     <div className="flex items-center gap-4">
                                     <div>
-                                       {r.hours < HOURS_IN_WORKDAY ? <MdIncompleteCircle className="size-6 text-orange-500" /> : <MdCheckCircle className="size-6 text-green-500" />}
+                                    <div
+                                        className="radial-progress bg-primary text-primary-content border-primary border-4"
+                                        style={{ "--value": r.hours/HOURS_IN_WORKDAY*100 } as React.CSSProperties } aria-valuenow={r.hours/HOURS_IN_WORKDAY*100} role="progressbar">
+                                        {r.hours/HOURS_IN_WORKDAY*100}%
+                                        </div>
                                     </div>
                                     <div className="flex flex-col items-start">
                                         <div className="text-sm opacity-60">{dayjs(r.date).format("ddd, MMM D, YYYY")}</div>
