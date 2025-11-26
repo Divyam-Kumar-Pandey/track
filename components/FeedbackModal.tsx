@@ -10,7 +10,7 @@ type FeedbackModalProps = {
   userDisplayName: string
   userId?: string
   email?: string
-  variant?: 'primary' | 'secondary'
+  variant?: 'primary' | 'secondary' | 'neutral' | 'outline'
 }
 
 const FeedbackModal = forwardRef<HTMLDialogElement, FeedbackModalProps>(
@@ -53,6 +53,11 @@ const FeedbackModal = forwardRef<HTMLDialogElement, FeedbackModalProps>(
       }
     }
 
+    const sendBtnClass =
+      variant === 'outline' ? 'btn btn-outline' :
+      variant === 'neutral' ? 'btn btn-neutral' :
+      'btn btn-outline'
+
     return (
       <dialog ref={internalRef} className="modal">
         <div className="modal-box">
@@ -70,7 +75,7 @@ const FeedbackModal = forwardRef<HTMLDialogElement, FeedbackModalProps>(
             </button>
             <a
               href={mailtoHref}
-              className={`btn btn-${variant} ${text.trim().length === 0 ? 'btn-disabled' : ''}`}
+              className={`${sendBtnClass} ${text.trim().length === 0 ? 'btn-disabled' : ''}`}
               onClick={() => {
                 if (text.trim().length === 0) {
                   internalRef.current?.close()

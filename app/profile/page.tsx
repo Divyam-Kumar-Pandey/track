@@ -8,6 +8,9 @@ import FeedbackModal from '@/components/FeedbackModal'
 
 export default function ProfilePage() {
   const { user, isLoaded } = useUser()
+  if(user === null) {
+    return <RedirectToSignIn />
+  }
   const bugDialogRef = useRef<HTMLDialogElement | null>(null)
   const featureDialogRef = useRef<HTMLDialogElement | null>(null)
   const profileDialogRef = useRef<HTMLDialogElement | null>(null)
@@ -73,17 +76,17 @@ export default function ProfilePage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-              <a className="btn btn-primary btn-block" onClick={openBugDialog}>
+              <a className="btn btn-outline btn-block" onClick={openBugDialog}>
                 Report a bug
               </a>
-              <a className="btn btn-info btn-block" onClick={openProfileDialog}>
+              <a className="btn btn-outline btn-block" onClick={openProfileDialog}>
                 Manage profile
               </a>
-              <a className="btn btn-secondary btn-block" onClick={openFeatureDialog}>
+              <a className="btn btn-outline btn-block" onClick={openFeatureDialog}>
                 Request a feature
               </a>
               <SignOutButton>
-                <button className="btn btn-outline btn-error btn-block">
+                <button className="btn btn-outline btn-block">
                   Logout
                 </button>
               </SignOutButton>
@@ -94,20 +97,11 @@ export default function ProfilePage() {
       </div>
 
       <dialog ref={profileDialogRef} className="modal">
-        <div className="modal-box w-11/12 max-w-4xl">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="font-bold text-lg">Manage profile</h3>
-            <form method="dialog">
-              <button className="btn btn-sm btn-ghost">✕</button>
-            </form>
-          </div>
-          <div className="border border-base-300 rounded-box p-2">
+
             <UserProfile />
-          </div>
-        </div>
-        <form method="dialog" className="modal-backdrop">
-          <button aria-label="Close" />
-        </form>
+            <form method="dialog" className="modal-backdrop">
+    <button>close</button>
+  </form>
       </dialog>
 
       <FeedbackModal
