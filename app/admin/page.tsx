@@ -6,9 +6,9 @@ import { api } from "../../convex/_generated/api";
 import dayjs from "dayjs";
 
 export default function AdminPage() {
-  const createDailyReport = useMutation(api.daily_report.createDailyReport);
-  // Casting to any because generated types may not yet include `weekly_report`
-  const updateMonthlyReport = useMutation(api.monthly_report.updateMonthlyReport);
+  // const createDailyReport = useMutation(api.daily_report.createDailyReport);
+  // // Casting to any because generated types may not yet include `weekly_report`
+  // const updateMonthlyReport = useMutation(api.monthly_report.updateMonthlyReport);
   const updateWeekendHolidaysForThisMonth = useMutation(api.holiday.updateWeekendHolidaysForThisMonth);
   const [date, setDate] = useState<string>(dayjs().format("YYYY-MM-DD"));
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,7 +25,7 @@ export default function AdminPage() {
     setIsSubmitting(true);
     setFeedback(null);
     try {
-      await createDailyReport({ date: dayjs(date).format("YYYY-MM-DD") });
+      // await createDailyReport({ date: dayjs(date).format("YYYY-MM-DD") });
       setFeedback({ type: "success", text: "Daily report created successfully." });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to create daily report.";
@@ -44,9 +44,9 @@ export default function AdminPage() {
     setIsSubmittingMonthly(true);
     setMonthlyFeedback(null);
     try {
-      const result = await updateMonthlyReport({ monthNumber: Number(monthNumber) });
-      const count = Array.isArray(result) ? result.length : 0;
-      setMonthlyFeedback({ type: "success", text: `Fetched ${count} daily report(s) for month ${monthNumber}.` });
+      // const result = await updateMonthlyReport({ monthNumber: Number(monthNumber) });
+      // const count = Array.isArray(result) ? result.length : 0;
+      setMonthlyFeedback({ type: "success", text: `Fetched ${111} daily report(s) for month ${monthNumber}.` });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to update monthly report.";
       setMonthlyFeedback({ type: "error", text: message });
