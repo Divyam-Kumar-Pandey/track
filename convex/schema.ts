@@ -6,13 +6,15 @@ export default defineSchema({
         date: v.string(),
         timestamp: v.string(),
         type: v.string(),
-    }).index("by_date", ["date"]),
+        user_id: v.string(),
+    }).index("by_date", ["date"]).index("by_user_id", ["user_id"]),
     daily_report: defineTable({
         date: v.string(),
         hours: v.float64(),
         minutes: v.float64(),
         seconds: v.float64(),
-    }).index("by_date", ["date"]),
+        user_id: v.string(),
+    }).index("by_date", ["date"]).index("by_user_id", ["user_id"]),
     monthly_report: defineTable({
         month_number: v.number(),
         start_date: v.string(),
@@ -20,10 +22,12 @@ export default defineSchema({
         hours: v.float64(),
         minutes: v.float64(),
         seconds: v.float64(),
-    }).index("by_month_number", ["month_number"]),
+        user_id: v.string(),
+    }).index("by_month_number", ["month_number"]).index("by_user_id", ["user_id"]),
     holiday: defineTable({
         month_number: v.number(),
         date: v.string(),
         name: v.string(),
     }).index("by_month_number", ["month_number"]),
+    
 });

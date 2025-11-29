@@ -9,6 +9,7 @@ import updateLocale from "dayjs/plugin/updateLocale";
 import { IoMdSettings } from "react-icons/io";
 import { MdCheckCircle, MdIncompleteCircle } from "react-icons/md";
 import TimeDisplayStatic from "@/components/TimeDisplayStatic";
+import { RedirectToSignIn, useUser } from "@clerk/nextjs";
 
 dayjs.extend(weekOfYear);
 dayjs.extend(updateLocale);
@@ -17,6 +18,10 @@ dayjs.updateLocale('en', {
 })
 
 export default function WeeklyReportPage() {
+  const { user } = useUser();
+  if (!user) {
+    return <RedirectToSignIn />;
+  }
   const reports = useQuery(api.monthly_report.getMonthlyReport);
   const workingDaysInMonth = useQuery(api.holiday.getWorkingDaysInMonth, { monthNumber: dayjs().month() });
   // const HOURS_IN_WORKMONTH = 50; 
